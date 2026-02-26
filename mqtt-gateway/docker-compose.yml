@@ -1,0 +1,33 @@
+services:
+  # 1. mqtt brocker
+  mqtt_broker:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto_broker
+    ports:
+      - "8883:8883"
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+      - ./certs:/mosquitto/config/certs
+    restart: unless-stopped
+
+  # 2. gateway Python Logic
+  gateway_logic:
+    build: ./gateway
+    container_name: python_gateway
+    depends_on:
+      - mqtt_broker
+    environment:
+      # Buffer location
+      - BUFFER_PATH=/data/buffer.json
+    env_file:
+      - .env
+    # Mount USB to cont  /data_buffer 
+    volumes:
+      - /mnt/usb:/data_buffer
+      - ./certs:/app/certs:ro
+      - ./data:/data
+    restart: always
+
