@@ -12,6 +12,7 @@ services:
       - ./mosquitto/log:/mosquitto/log
       - ./certs:/mosquitto/config/certs
     restart: unless-stopped
+    network_mode: host
 
   # 2. gateway Python Logic
   gateway_logic:
@@ -20,7 +21,7 @@ services:
     depends_on:
       - mqtt_broker
     environment:
-      # Buffer location
+      # Говорим скрипту сохранять сюда
       - BUFFER_PATH=/data/buffer.json
     env_file:
       - .env
@@ -30,4 +31,5 @@ services:
       - ./certs:/app/certs:ro
       - ./data:/data
     restart: always
-
+    network_mode: host
+ 

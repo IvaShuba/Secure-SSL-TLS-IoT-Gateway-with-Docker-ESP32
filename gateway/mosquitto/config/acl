@@ -1,0 +1,9 @@
+# --- ACL for our shared user ---
+user edge_device
+topic readwrite #
+# Each device can only publish to its own subtopic
+# %c is a dynamic variable for ClientID
+#pattern write sensors/%c/#
+
+# Each device can only read its own commands
+#pattern read commands/%c/#
