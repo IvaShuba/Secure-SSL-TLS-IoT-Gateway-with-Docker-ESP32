@@ -13,6 +13,11 @@ config.h
 *.pem
 *.key
 *.crt
+*.srl
+*.csr
+certs/
+private/
+pki/
 
 # ============================
 # Python
