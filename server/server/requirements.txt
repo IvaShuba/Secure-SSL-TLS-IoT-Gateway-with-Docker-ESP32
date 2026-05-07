@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+protobuf
+influxdb-client
+immudb-py
+cryptography
+python-dotenv
+prometheus-client
+aiohttp
+pycryptodome

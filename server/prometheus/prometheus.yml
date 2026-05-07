@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'server-app'
+    static_configs:
+      - targets: ['server-app:8443']
+    metrics_path: /metrics
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true   # в проде: используйте доверенные сертификаты
+

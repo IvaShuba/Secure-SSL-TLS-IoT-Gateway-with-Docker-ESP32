@@ -1,7 +1,10 @@
 paho-mqtt
+protobuf
 schedule
 numpy<2.0.0
 requests
 aiosqlite
 dotenv
 pycryptodome
+psutil
+aiohttp

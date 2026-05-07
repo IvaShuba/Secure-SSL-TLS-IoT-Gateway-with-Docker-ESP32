@@ -1,0 +1,79 @@
+# Docker Compose for HPmini IoT Stack
+services:
+  server-app:
+    build: ./server
+    container_name: server-app
+    volumes:
+      - ./server:/app
+      - ./certs:/certs:ro
+    env_file:
+      - ./.env
+    ports:
+      - "8443:8443"   # доступ внутри VPN/Tailscale; не открывать публично
+    depends_on:
+      - influxdb
+      - immudb
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    environment:
+      - INFLUXDB_ADMIN_USER=${INFLUX_USER}
+      - INFLUXDB_ADMIN_PASSWORD=${INFLUX_PASSWORD}
+      - INFLUXDB_BUCKET=${INFLUX_BUCKET}
+      - INFLUXDB_ORG=${INFLUX_ORG}
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    ports:
+      - "8086:8086"
+
+  immudb:
+    image: codenotary/immudb:1.4.0
+    container_name: immudb
+    environment:
+      IMMUDB_DIR: /immudb/data
+    volumes:
+      - immudb-data:/immudb/data
+    ports:
+      - "3322:3322"
+      - "8084:8080"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:9.0.0
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3003:3000"
+    depends_on:
+      - influxdb
+      - prometheus
+      
+     
+  #  for dataflow from mangoDB to grafana
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red-data:/data
+    #depends_on:
+     # - mongodb
+     # - mosquitto_iot
+    restart: unless-stopped
+
+volumes:
+  influxdb-data:
+  immudb-data:
+  grafana-data:

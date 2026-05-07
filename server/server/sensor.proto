@@ -1,0 +1,23 @@
+syntax = "proto3";
+package sensors;
+
+message SensorReading {
+  string device = 1;     // имя устройства (esp32-1, esp32-2, gateway)
+  string sensor = 2;     // имя сенсора (temp, hum, soil, relay1, pump, etc)
+  string units = 3;      // "C", "%", "bool", "raw", etc
+  double value = 4;      // значение
+  int64 ts = 5;          // timestamp (ms)
+}
+
+message GatewayStatus {
+  string gateway_id = 1;
+  double cpu = 2;
+  double ram = 3;
+  double uptime = 4;
+  int64 ts = 5;
+}
+
+message Batch {
+  repeated SensorReading readings = 1;
+  GatewayStatus gateway = 2;   // optional
+}
